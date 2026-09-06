@@ -177,6 +177,7 @@ const CHOICE_Q2 = [
 
 const CHOICE_Q3 = [
   "Целых три сыра и один маленький канал",
+  "Детей",
   "Соседского кота, который попросил подвезти",
   "Запасные тюльпаны на случай переговоров",
   "Ветряную мельницу в разобранном виде",
@@ -625,6 +626,7 @@ const RESULTS = {
 const RESET_SCORES = { red: 0, blue: 0, green: 0, beige: 0, purple: 0, orange: 0, pink: 0, teal: 0, gray: 0, brown: 0, maroon: 0, gold: 0, silver: 0, cyan: 0, magenta: 0, lime: 0, olive: 0, navy: 0, coral: 0, crimson: 0, indigo: 0, tan: 0, khaki: 0, plum: 0, ivory: 0, mint: 0, rose: 0, sky: 0, salmon: 0, amber: 0, slate: 0, lavender: 0, charcoal: 0, rust: 0, emerald: 0, sapphire: 0, chestnut: 0, moss: 0, periwinkle: 0, cobalt: 0, tangerine: 0, aubergine: 0, seafoam: 0, mustard: 0, iris: 0, clay: 0, mauve: 0, sand: 0, jade: 0, granite: 0, flamingo: 0, honey: 0, seroburymalinoviy: 0 };
 
 const KEY = "wall-start-time";
+const OFFLINE_SINCE_KEY = "wall-offline-since";
 const UNLOCK_SECONDS = 5;
 
 const stage = document.getElementById("stage");
@@ -639,6 +641,29 @@ let bonusUsed = false;
 let alarmActive = false;
 
 const BONUS_KEY = "wall-bonus-claimed";
+
+function loadOfflineTime() {
+  try {
+    const saved = localStorage.getItem(OFFLINE_SINCE_KEY);
+    if (!saved) return;
+
+    const since = Number(saved);
+
+    if (Number.isFinite(since) && since > 0) {
+      offlineElapsed += Math.max(0, Date.now() - since) / 1000;
+    }
+
+    localStorage.removeItem(OFFLINE_SINCE_KEY);
+  } catch {}
+}
+
+function startOfflineCounting() {
+  try {
+    localStorage.setItem(OFFLINE_SINCE_KEY, String(Date.now()));
+  } catch {}
+}
+
+loadOfflineTime();
 
 function bonusClaimedOnce() {
   try { return localStorage.getItem(BONUS_KEY) === "1"; } catch { return bonusClaimed; }
@@ -731,6 +756,7 @@ function updateMeter() {
   const total = q.options.length;
   const unlocked = unlockLimit(total);
   const hasMeter = document.getElementById("meterLabel") && document.getElementById("meterFill");
+
   if (hasMeter) {
     const label = document.getElementById("meterLabel");
     const fill = document.getElementById("meterFill");
@@ -755,6 +781,7 @@ function advance() {
 function showResult() {
   const winner = Object.keys(scores).reduce((a, b) => (scores[a] >= scores[b] ? a : b));
   const r = RESULTS[winner];
+
   stage.innerHTML = `
     <div class="card result">
       <div class="result__swatch" style="background:${r.color}"></div>
@@ -762,6 +789,7 @@ function showResult() {
       <p class="result__text">${r.text}</p>
       <button class="restart">Пройти ещё раз</button>
     </div>`;
+
   stage.querySelector(".restart").addEventListener("click", () => {
     scores = { ...RESET_SCORES };
     step = 0;
@@ -770,7 +798,6 @@ function showResult() {
 }
 
 setInterval(() => {
-  if (!navigator.onLine) offlineElapsed += 0.5;
   if (QUESTIONS[step] && !stage.querySelector(".result")) {
     updateMeter();
   }
@@ -779,9 +806,11 @@ setInterval(() => {
 function showAlarm() {
   const already = bonusClaimedOnce();
   if (alarmActive) return;
+
   alarmActive = true;
   alarmAudio.currentTime = 0;
   alarmAudio.play().catch(() => {});
+
   const body = already
     ? `<p class="alarm-text">
         Вы ушли со страницы! Никуда не уходите!<br>
@@ -794,6 +823,7 @@ function showAlarm() {
         Заберите приз — он уже тут.
       </p>
       <button class="alarm-claim" id="alarmClaim">Забрать +5 ответов сейчас</button>`;
+
   stage.insertAdjacentHTML(
     "beforeend",
     `<div class="alarm-overlay" id="alarmOverlay">
@@ -803,17 +833,21 @@ function showAlarm() {
       </div>
     </div>`
   );
+
   document.getElementById("alarmClaim").addEventListener("click", () => {
     if (!already) {
       try { localStorage.setItem(BONUS_KEY, "1"); } catch {}
       bonusClaimed = true;
       bonusUsed = true;
     }
+
     const ov = document.getElementById("alarmOverlay");
     if (ov) ov.remove();
+
     alarmAudio.pause();
     alarmAudio.currentTime = 0;
     alarmActive = false;
+
     if (QUESTIONS[step] && !stage.querySelector(".result")) updateMeter();
   });
 }
@@ -823,12 +857,21 @@ setTimeout(() => { armed = true; }, 800);
 
 function watchLeaving() {
   document.addEventListener("visibilitychange", () => {
-    if (armed && document.hidden) showAlarm();
+    if (!armed) return;
+
+    if (document.hidden) {
+      startOfflineCounting();
+      showAlarm();
+    } else {
+      loadOfflineTime();
+      updateMeter();
+    }
   });
-  window.addEventListener("blur", () => {
-    setTimeout(() => {
-      if (armed && (!document.hasFocus() || document.hidden)) showAlarm();
-    }, 200);
+
+  window.addEventListener("pagehide", () => {
+    if (armed) {
+      startOfflineCounting();
+    }
   });
 }
 
