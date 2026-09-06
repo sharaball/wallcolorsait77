@@ -1,0 +1,248 @@
+:root {
+  --bg: #f4f1ea;
+  --ink: #2b2b2b;
+  --muted: #8a8578;
+  --card: #ffffff;
+  --accent: #b28a4e;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  width: 100%;
+  max-width: 100%;
+  min-height: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  font-family: -apple-system, "Segoe UI", Roboto, system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 20px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.stage {
+  width: 100%;
+  max-width: 560px;
+  max-width: calc(100%);
+  min-height: 540px;
+  display: flex;
+  flex-direction: column;
+}
+
+.card {
+  background: var(--card);
+  border-radius: 24px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.06);
+  padding: 28px;
+  animation: rise .4s ease;
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin: 0 0 6px;
+}
+
+.subtitle {
+  color: var(--muted);
+  font-size: 15px;
+  margin: 0 0 28px;
+}
+
+.progress {
+  height: 6px;
+  background: #eee8dd;
+  border-radius: 999px;
+  margin-bottom: 28px;
+  overflow: hidden;
+}
+
+.progress__bar {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 999px;
+  transition: width .3s ease;
+}
+
+.question {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin: 0 0 24px;
+  line-height: 1.3;
+}
+
+.options { display: grid; gap: 12px; }
+
+.option {
+  width: 100%;
+  text-align: left;
+  font: inherit;
+  font-size: 16px;
+  color: var(--ink);
+  background: #fff;
+  border: 1.5px solid #e6dfd2;
+  border-radius: 14px;
+  padding: 16px 18px;
+  cursor: pointer;
+  transition: border-color .15s ease, background .15s ease;
+}
+
+.option:hover { border-color: var(--accent); background: #faf7f0; }
+.option:active { transform: scale(0.99); }
+
+.option.locked {
+  display: none;
+}
+
+.meter { margin: 0 0 20px; }
+
+.meter__label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+
+.meter__track {
+  height: 8px;
+  background: #eee8dd;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.meter__fill {
+  height: 100%;
+  width: 0;
+  background: linear-gradient(90deg, #b28a4e, #d97a2e);
+  border-radius: 999px;
+  transition: width 0.6s ease;
+}
+
+.result { text-align: center; }
+
+.result__swatch {
+  width: 88px;
+  height: 88px;
+  border-radius: 22px;
+  margin: 0 auto 24px;
+  box-shadow: inset 0 -20px 40px rgba(0,0,0,0.12), 0 12px 24px rgba(0,0,0,0.10);
+}
+
+.result__name {
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 0 0 16px;
+}
+
+.result__text {
+  font-size: 16px;
+  line-height: 1.6;
+  color: #555;
+  margin: 0 0 28px;
+}
+
+.restart {
+  font: inherit;
+  font-weight: 600;
+  color: #fff;
+  background: var(--accent);
+  border: none;
+  border-radius: 14px;
+  padding: 15px 22px;
+  cursor: pointer;
+  transition: opacity .15s ease;
+}
+
+.restart:hover { opacity: 0.9; }
+
+.option, .question, .subtitle, .title, .result__text, .meter, .progress {
+  max-width: 100%;
+}
+
+/* --- Claim overlay (tab exit alarm) --- */
+.alarm-overlay {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  max-width: 100%;
+  max-height: 100%;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(20, 12, 4, 0.65);
+  overflow: auto;
+}
+
+.alarm-box {
+  width: 100%;
+  max-width: 420px;
+  background: #fff;
+  border-radius: 22px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+  padding: 30px 26px;
+  text-align: center;
+  animation: rise .3s ease;
+  border: 3px solid #e03e2f;
+}
+
+.alarm-title {
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 0 0 10px;
+  color: #c02012;
+}
+
+.alarm-title .pulse { animation: pulse 1s ease-in-out infinite; }
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.25; }
+}
+
+.alarm-text {
+  font-size: 16px;
+  line-height: 1.6;
+  color: #444;
+  margin: 0 0 20px;
+}
+
+.alarm-claim {
+  font: inherit;
+  font-weight: 700;
+  font-size: 16px;
+  color: #fff;
+  background: #c02012;
+  border: none;
+  border-radius: 14px;
+  padding: 16px 22px;
+  width: 100%;
+  cursor: pointer;
+  transition: opacity .15s ease, transform .1s ease;
+}
+
+.alarm-claim:hover { opacity: 0.9; }
+.alarm-claim:active { transform: scale(0.98); }
