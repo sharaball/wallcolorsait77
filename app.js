@@ -628,7 +628,7 @@ const KEY = "wall-start-time";
 const UNLOCK_SECONDS = 5;
 
 const stage = document.getElementById("stage");
-const alarmAudio = new Audio("signalizachiya.mp3");
+const alarmAudio = new Audio("zvuki/signalizachiya.mp3");
 alarmAudio.loop = true;
 
 let scores = { ...RESET_SCORES };
