@@ -705,7 +705,7 @@ function render() {
   stage.innerHTML = `
     <div class="card">
       <h1 class="title">Цвет стены</h1>
-      <p class="subtitle">Абсурдные вопросы про голландцев — узнай, какая ты стена.</p>
+      <p class="subtitle">каой ты сена узна</p>
       <div class="progress"><div class="progress__bar" style="width:${pct}%"></div></div>
       <h2 class="question">${q.q}</h2>
       ${
@@ -818,9 +818,9 @@ function showAlarm() {
       </p>
       <button class="alarm-claim" id="alarmClaim">Вернуться</button>`
     : `<p class="alarm-text">
-        Новые ответы получаются оффлайн — и не выходите сейчас!<br>
+        Новые ответы получаются оффлайн - и не выходите сейчас!<br>
         Вы ушли со страницы! Никуда не уходите!<br>
-        Заберите приз — он уже тут.
+        Заберите приз - он уже тут.
       </p>
       <button class="alarm-claim" id="alarmClaim">Забрать +5 ответов сейчас</button>`;
 
