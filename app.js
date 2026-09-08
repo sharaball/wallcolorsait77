@@ -704,7 +704,7 @@ function render() {
 
   stage.innerHTML = `
     <div class="card">
-      <h1 class="title">Цвет стены</h1>
+      <h1 class="title">цет сены/h1>
       <p class="subtitle">каой ты сена узна</p>
       <div class="progress"><div class="progress__bar" style="width:${pct}%"></div></div>
       <h2 class="question">${q.q}</h2>
